@@ -1,15 +1,30 @@
 {
-    "name": "podchoosee-parser",
-    "version": "0.1.0",
-    "description": "A simple utility for parsing podcast RSS feeds.",
-    "main": "app.js",
-    "author": {
-        "name": "Corey Ralli",
-        "email": ""
-    },
-    "dependencies": {
-        "request": "~2.54.0",
-        "node-xml-lite": "~0.0.3",
-        "q" : "~1.2.0"
-    }
+  "name": "podchoosee-parser",
+  "version": "0.1.5",
+  "description": "A simple utility for parsing podcast RSS feeds.",
+  "main": "app.js",
+  "author": "Corey Ralli",
+  "dependencies": {
+    "request": "~2.54.0",
+    "node-xml-lite": "~0.0.3",
+    "q": "~1.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/coreyRalli/podchoosee-parser.git"
+  },
+  "keywords": [
+    "podcast",
+    "xml",
+    "feed"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/coreyRalli/podchoosee-parser/issues"
+  },
+  "homepage": "https://github.com/coreyRalli/podchoosee-parser"
 }
