@@ -1,5 +1,5 @@
 ﻿# podchoosee-parser
-A simple utility for parsing podcast feeds for node js.
+A simple utility for parsing podcast feeds in node js.
 
 ## Usage
 
@@ -66,9 +66,9 @@ This is what a typical response looks like (in JSON):
 
 Most of it is self-explanitory except for a couple of things:
 
-1. ```subtitle``` vs ```summary``` vs ```description```: The ```subtitle``` & ```summary``` properties come from the RSS feed's iTunes tags. ```description``` tends to be a raw (HTML tags and such) output, while the itunes tags are pre-formatted. The ```summary`` tag provides a full description and ```subtitle``` only a single sentence or nothing at all.
+1. ```subtitle``` vs ```summary``` vs ```description```: The ```subtitle``` & ```summary``` properties come from the RSS feed's iTunes tags. ```description``` tends to be a raw (HTML tags and such) output, while the itunes tags are pre-formatted. The ```summary``` tag provides a full description and ```subtitle``` only a single sentence or nothing at all.
 
-2. ```mediaType```: The ```mediaType``` property in the episode object is a interger, with 0 being audio, 1 video and 2 anything else.
+2. ```mediaType```: The ```mediaType``` property in the episode object is an interger, with 0 being audio, 1 video and 2 anything else.
 
 
 ## Dependencies
