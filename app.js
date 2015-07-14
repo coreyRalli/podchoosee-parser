@@ -37,40 +37,78 @@ PodchooseeParser.parseSubscription = function (xml) {
             } else {
                 switch (xml[n].name) {
                     case "title":
-                        subscription.title = xml[n].childs[0];
+                        if (typeof xml[n].childs != "undefined") {
+                            if (xml[n].childs.length > 0)
+                                subscription.title = xml[n].childs[0];
+                        }
                         break;
                     case "link":
-                        subscription.websiteUrl = xml[n].childs[0];
+                        if (typeof xml[n].childs != "undefined") {
+                            if (xml[n].childs.length > 0)
+                                subscription.websiteUrl = xml[n].childs[0];
+                        }
                         break;
                     case "copyright":
-                        subscription.copyright = xml[n].childs[0];
+                        if (typeof xml[n].childs != "undefined") {
+                            if (xml[n].childs.length > 0)
+                                subscription.copyright = xml[n].childs[0];
+                        }
                         break;
                     case "itunes:author":
-                        subscription.author = xml[n].childs[0];
+                        if (typeof xml[n].childs != "undefined") {
+                            if (xml[n].childs.length > 0)
+                                subscription.author = xml[n].childs[0];
+                        }
                         break;
                     case "description":
-                        subscription.description = xml[n].childs[0];
+                        if (typeof xml[n].childs != "undefined") {
+                            if (xml[n].childs.length > 0)
+                                subscription.description = xml[n].childs[0];
+                        }
                         break;
                     case "itunes:summary":
-                        subscription.summary = xml[n].childs[0];
+                        if (typeof xml[n].childs != "undefined") {
+                            if (xml[n].childs.length > 0)
+                                subscription.summary = xml[n].childs[0];
+                        }
                         break;
                     case "itunes:subtitle":
-                        subscription.subtitle = xml[n].childs[0];
+                        if (typeof xml[n].childs != "undefined") {
+                            if (xml[n].childs.length > 0)
+                                subscription.subtitle = xml[n].childs[0];
+                        }
                         break;
                     case "itunes:category":
-                        subscription.category = xml[n].attrib.text;
+                        if (typeof xml[n].attrib != "undefined") {
+                            if (typeof xml[n].attrib.text != "undefined")
+                                subscription.category = xml[n].attrib.text;
+                        }
                         break;
                     case "image":
-                        subscription.imageUrl = xml[n].childs[0].childs[0];
+                        if (typeof xml[n].childs != "undefined") {
+                            if (xml[n].length > 0 && typeof xml[n].childs[0].childs != "undefined") {
+                                if (xml[n].childs[0].childs.length > 0)
+                                    subscription.imageUrl = xml[n].childs[0].childs[0];
+                            }
+                        }
                         break;
                     case "itunes:image":
-                        subscription.iTunesImageUrl = xml[n].attrib.href;
+                        if (typeof xml[n].attrib != "undefined") {
+                            if (typeof xml[n].attrib.href != "undefined")
+                                subscription.iTunesImageUrl = xml[n].attrib.href;                          
+                        }
                         break;
                     case "itunes:explicit":
-                        subscription.isExplict = (xml[n].childs[0] == "Yes") ? true : false;
+                        if (typeof xml[n].attrib != "undefined") {
+                            if (xml[n].childs.length > 0)                 
+                                subscription.isExplict = (xml[n].childs[0] == "Yes") ? true : false;
+                        }
                         break;
                     case "media:thumbnail":
-                        subscription.mediaThumbnail = xml[n].attrib.url;
+                        if (typeof xml[n].attrib != "undefined") {
+                            if (typeof xml[n].attrib.url != "undefined")
+                                subscription.mediaThumbnail = xml[n].attrib.url;
+                        }
                         break;
                 }
             }
@@ -99,55 +137,93 @@ PodchooseeParser.parseEpisodes = function (xml) {
                 for (var i = 0; i < childNodes.length; i++) {
                     switch (childNodes[i].name) {
                         case "title":
-                            episode.title = childNodes[i].childs[0];
+                            if (typeof childNodes[i].childs != "undefined") {
+                               if (childNodes[i].childs.length > 0)
+                                    episode.title = childNodes[i].childs[0];
+                            }
                             break;
                         case "link":
-                            episode.episodeWebLink = childNodes[i].childs[0];
+                            if (typeof childNodes[i].childs != "undefined") {
+                                if (childNodes[i].childs.length > 0)
+                                    episode.episodeWebLink = childNodes[i].childs[0];
+                            }
                             break;
                         case "description":
-                            episode.description = childNodes[i].childs[0];
+                            if (typeof childNodes[i].childs != "undefined") {
+                                if (childNodes[i].childs.length > 0)
+                                    episode.description = childNodes[i].childs[0];
+                            }
                             break;
                         case "itunes:summary":
-                            episode.summary = childNodes[i].childs[0];
+                            if (typeof childNodes[i].childs != "undefined") {
+                                if (childNodes[i].childs.length > 0)
+                                    episode.summary = childNodes[i].childs[0];
+                            }
                             break;
                         case "itunes:subtitle":
-                            episode.subtitle = childNodes[i].childs[0];
+                            if (typeof childNodes[i].childs != "undefined") {
+                                if (childNodes[i].childs.length > 0)
+                                    episode.subtitle = childNodes[i].childs[0];
+                            }
                             break;
                         case "guid":
-                            episode.rssGUID = childNodes[i].childs[0];
+                            if (typeof childNodes[i].childs != "undefined") {
+                                if (childNodes[i].childs.length > 0)
+                                    episode.rssGUID = childNodes[i].childs[0];
+                            }
                             break;
                         case "enclosure":
-                            var type = childNodes[i].attrib.type;
+                            if (typeof childNodes[i].attrib.type != "undefined") {
+                                var type = childNodes[i].attrib.type;
+                                
+                                if (type.lastIndexOf("audio", 0) === 0) { episode.mediaType = 0; }
+                                else if (type.lastIndexOf("video", 0) === 0) { episode.mediaType = 1; }
+                                else { episode.mediaType = 2; }
+                            }
                             
-                            if (type.lastIndexOf("audio", 0) === 0) { episode.mediaType = 0; }
-                            else if (type.lastIndexOf("video", 0) === 0) { episode.mediaType = 1; }
-                            else { episode.mediaType = 2; }
+                            if (typeof childNodes[i].attrib.url != "undefined") {
+                                episode.mediaFileUrl = childNodes[i].attrib.url;
+                            }
                             
-                            episode.mediaFileUrl = childNodes[i].attrib.url;
-                            
-                            episode.mediaFileSize = childNodes[i].attrib.length;
-                            
+                            if (typeof childNodes[i].attrib.length != "undefined") {
+                                episode.mediaFileSize = childNodes[i].attrib.length;
+                            }
                             break;
 
                         case "pubDate":
-                            var d = new Date(childNodes[i].childs[0]);
-                            
-                            var convertedString = d.toISOString();
-                            
-                            episode.pubDate = convertedString;
+                        
+                            if (typeof childNodes[i].childs != "undefined") {
+                                var d = new Date(childNodes[i].childs[0]);
+                                
+                                var convertedString = d.toISOString();
+                                
+                                episode.pubDate = convertedString;
+                            }
                             
                             break;
 
                         case "media:thumbnail":
-                            episode.mediaThumbnail = childNodes[i].attrib.url;
+                            if (typeof childNodes[i].attrib.url != "undefined")
+                                episode.mediaThumbnail = childNodes[i].attrib.url;
                             break;
 
                         case "itunes:explicit":
-                            episode.isExplicit = (childNodes[i].childs[0] == "Yes") ? true : false;
+                            if (typeof childNodes[i].childs != "undefined") {
+                                if (childNodes[i].childs.length > 0)
+                                    episode.isExplicit = (childNodes[i].childs[0] == "Yes") ? true : false;
+                            }
                             break;
 
                         case "image":
-                            episode.episodeImageUrl = childNodes[i].childs[0].childs[0];
+                            if (typeof childNodes[i].childs != "undefined") {
+                                if (childNodes[i].childs.length > 0 &&
+                                     typeof childNodes[i].childs[0].childs != "undefined") {
+                                         
+                                    if (childNodes[i].childs[0].childs.length > 0)
+                                        episode.episodeImageUrl = childNodes[i].childs[0].childs[0];
+                                }
+                            }                        
+                            
                             break;
                     }
                 }

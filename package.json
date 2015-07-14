@@ -1,6 +1,6 @@
 {
   "name": "podchoosee-parser",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "description": "A simple utility for parsing podcast RSS feeds.",
   "main": "app.js",
   "author": "Corey Ralli",
