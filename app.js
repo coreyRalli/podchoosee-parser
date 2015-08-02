@@ -198,6 +198,8 @@ PodchooseeParser.parseEpisodes = function (xml) {
                                 var convertedString = d.toISOString();
                                 
                                 episode.pubDate = convertedString;
+                                
+                                episode.pubDateMilliseconds = d.getTime();
                             }
                             
                             break;
