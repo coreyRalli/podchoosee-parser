@@ -14,11 +14,27 @@ PodchooseeParser.getXML = function (uri) {
     
     requestPromiseWrapper(uri, { headers: { "User-Agent" : PodchooseeParser.userAgent } })
         .done(function (response) {
-        var xml = NodeXMLLite.parseString(response[0].body);
+            var channelNode;
         
-        var channelNode = xml.childs[0].childs;
-        
-        deferral.resolve(channelNode);
+            var xml = NodeXMLLite.parseString(response[0].body);
+            
+            for (var i = 0; i < xml.childs.length; i++) {
+                var xmlNode = xml.childs[i];
+                
+                if (!xmlNode) {
+                    continue;
+                }
+                else {
+                    if (typeof xmlNode.name !== "undefined") {
+                        if (xmlNode.name === "channel") {
+                            channelNode = xmlNode.childs;
+                            break;
+                        }
+                    }
+                }
+            }
+    
+            deferral.resolve(channelNode);
     }, function (ex) {
         deferral.reject(ex);
     });
