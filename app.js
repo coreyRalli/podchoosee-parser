@@ -138,16 +138,44 @@ PodchooseeParser.parseSubscription = function (xml) {
     
     return deferral.promise;
 }
-PodchooseeParser.parseEpisodes = function (xml) {
+PodchooseeParser.parseEpisodes = function (xml, options) {
     var deferral = Q.defer();
+    
+    var o = options || {};
+    
+    var skipItems = (typeof o.skip == "undefined") ? -1 : o.skip;
+    var takeItems = (typeof o.stake == "undefined") ? -1 : o.take;
+    
+    var currentSkip = 0;
+    var currentTake = 0;
     
     var episodes = [];
     
     try {
-        for (var n = 0; n < xml.length; n++) {
+        var inTakeMode = false;
+
+        for (var n = 0; n < xml.length; n++) {            
             var episode = {};
             
             if (xml[n].name == "item") {
+                if (skipItems != -1) {
+                    if (currentSkip < skipItems) {
+                        currentSkip++;
+                        continue;
+                    }
+                    else if (!inTakeMode) {
+                        inTakeMode = true;
+                    }
+                }
+                
+                if (inTakeMode) {
+                    if (takeItems != -1) {
+                        if (currentTake >= takeItems) {
+                            break;
+                        }
+                    }
+                }
+
                 var childNodes = xml[n].childs
                 
                 for (var i = 0; i < childNodes.length; i++) {
@@ -171,7 +199,7 @@ PodchooseeParser.parseEpisodes = function (xml) {
                             }
                             break;
                         case "itunes:summary":
-                            if (typeof childNodes[i].childs != "undefined") {
+                             if (typeof childNodes[i].childs != "undefined") {
                                 if (childNodes[i].childs.length > 0)
                                     episode.summary = childNodes[i].childs[0];
                             }
@@ -247,6 +275,10 @@ PodchooseeParser.parseEpisodes = function (xml) {
                 }
                 
                 episodes.push(episode);
+
+                if (inTakeMode) {
+                    currentTake++;
+                }
             }
         }
         
@@ -260,18 +292,29 @@ PodchooseeParser.parseEpisodes = function (xml) {
     return deferral.promise;
 }
 
-PodchooseeParser.getSubscription = function (url, callback) {
+PodchooseeParser.getSubscription = function (url, options, callback) {
     var subContainer = {
         subscription: null,
         episodes: []
     };
+    
+    var o = options || {};
+    
+    var skipCount = (typeof o.skip == "undefined") ? -1 : o.skip;
+    var takeCount = (typeof o.take == "undefined") ? -1 : o.take;
+    
+    var parseSub = (typeof o.parseSub == "undefined") ? true : o.parseSub;
     
     var subXML;
     
     PodchooseeParser.getXML(url)
     .then(function (xml) {
         subXML = xml;
-        return PodchooseeParser.parseSubscription(subXML);
+
+        if (parseSub)
+            return PodchooseeParser.parseSubscription(subXML);
+        else
+            return Q(null);
     })
     .then(function (sub) {
         subContainer.subscription = sub;
@@ -283,11 +326,18 @@ PodchooseeParser.getSubscription = function (url, callback) {
         
         callback(null, subContainer);
     }, function (ex) {
-        callback(ex);
+        callback(ex, null);
     });
 }
-PodchooseeParser.getSubscriptionPromise = function (url) {
+PodchooseeParser.getSubscriptionPromise = function (url, options) {
     var deferral = Q.defer();
+    
+    var o = options || {};
+    
+    var skipCount = (typeof o.skip == "undefined") ? -1 : o.skip;
+    var takeCount = (typeof o.take == "undefined") ? -1 : o.take;
+    
+    var parseSub = (typeof o.parseSub == "undefined") ? true : o.parseSub;
     
     var subContainer = {
         subscription: null,
@@ -299,13 +349,16 @@ PodchooseeParser.getSubscriptionPromise = function (url) {
     PodchooseeParser.getXML(url)
     .then(function (xml) {
         subXML = xml;
-
-        return PodchooseeParser.parseSubscription(subXML);
+        
+        if (parseSub)
+            return PodchooseeParser.parseSubscription(subXML);
+        else
+            return Q(null);
     })
     .then(function (sub) {
         subContainer.subscription = sub;
         
-        return PodchooseeParser.parseEpisodes(subXML);
+        return PodchooseeParser.parseEpisodes(subXML, skipCount, takeCount);
     })
     .done(function (eps) {
     subContainer.episodes = eps;
@@ -320,4 +373,3 @@ PodchooseeParser.getSubscriptionPromise = function (url) {
 
 
 module.exports = PodchooseeParser;
-

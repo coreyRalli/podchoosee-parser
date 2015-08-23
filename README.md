@@ -5,19 +5,19 @@ A simple utility for parsing podcast feeds in node js.
 
 Using podchoosee-parser is super easy: 
 
-#####With promses (with thanks to the awesome Q library)
+#### With promses (with thanks to the awesome Q library)
 ```
 var pp = require('podchoosee-parser');
-pp.getSubscriptionPromise('url-of-feed-here')
+pp.getSubscriptionPromise('url-of-feed-here', { skip: 0, take: 25, parseSub: true })
 .done(function(response) {
 	console.log(response.subscription.title);
 });
 ```
 
-#####Or with callbacks... if you like things old-school:
+#### Or with callbacks... if you like things old-school:
 ```
 var pp = require('podchoosee-parser');
-pp.getSubscription('url-of-feed-here', function (err, response) {
+pp.getSubscription('url-of-feed-here', { skip: 0, take: 25, parseSub: true }, function (err, response) {
 	if (err) {
 		console.log("Something went wrong!");
 	} else {
@@ -31,31 +31,31 @@ This is what a typical response looks like (in JSON):
 ```
 {
    "subscription":{
-      "title":"Hollywood Handbook",
-      "websiteUrl":"http://www.earwolf.com/show/hollywood-handbook/",
-      "description":"Hollywood Handbook is an insider's guide to achieving your showbiz dreams from two A-List it-boys who are living theirs. Hayes and Sean provide an exclusive VIP backstage pass into Tinseltown politics, answer questions from unsuccessful listeners, and bring in famous guests to discuss their craft and how they became what they are (famous).",
-      "copyright":"Earwolf Media, LLC",
-      "author":"Earwolf",
+      "title":"This Melbournian Life",
+      "websiteUrl":"http://thismelbournianlife.com",
+      "description":"Stuff happens.",
+      "copyright":"Podchoosee",
+      "author":"Podchoosee",
       "category":"Comedy",
-      "iTunesImageUrl":"http://cdn.earwolf.com/wp-content/uploads/2013/09/HollywoodHandbook_1600x1600_Cover1.jpg",
+      "iTunesImageUrl":"http://thismelbournianlife.com/puppy.jpg",
       "isExplict":true,
-      "summary":"Hollywood Handbook is an insider's guide to achieving your showbiz dreams from two A-List it-boys who are living theirs. Hayes and Sean provide an exclusive VIP backstage pass into Tinseltown politics, answer questions from unsuccessful listeners, and bring in famous guests to discuss their craft and how they became what they are (famous).",
+      "summary":"Stuff happens",
       "subtitle":"",
-      "imageUrl":"http://cdn.earwolf.com/wp-content/uploads/2013/09/HollywoodHandbook_1600x1600_Cover1.jpg"
+      "imageUrl":"http://thismelbournianlife.com/puppy.jpg"
    },
    "episodes":[
       {
-         "title":"The ScuzzMan, Dom's Close Friend",
-         "episodeWebLink":"http://www.earwolf.com/episode/the-scuzzman-doms-close-friend/",
-         "description":"With Hayes gone, Sean brings in his assistant Dom to fill the void and showers him with apologies in exchange for the exciting golden-hairedguest he booked. Then, Dom's friend The ScuzzMan joins them to discuss Volleyball: A Real Underdog Story. Fina...",
-         "rssGUID":"http://www.earwolf.com/episode/the-scuzzman-doms-close-friend/",
-         "mediaThumbnail":"http://cdn.earwolf.com/wp-content/uploads/2013/09/HollywoodHandbook_1600x1600_Cover1.jpg",
+         "title":"Hanging out by the clocks",
+         "episodeWebLink":"http://thismelbournianlife.com/hanging-by-the-clocks",
+         "description":"we hang out by the clocks and talk to people",
+         "rssGUID":"http://thismelbournianlife.com/hanging-by-the-clocks",
+         "mediaThumbnail":"http://thismelbournianlife.com/assets/clocks.png",
          "pubDate":"2015-03-31T07:02:04.000Z",
          "isExplicit":true,
-         "subtitle":"With Hayes gone, Sean brings in his assistant Dom to fill the void and showers him with apologies in exchange for the exciting golden-hairedguest he booked. Then, Dom's friend The ScuzzMan joins them to discuss Volleyball: A Real Underdog Story. Fina...",
-         "summary":"With Hayes gone, Sean brings in his assistant Dom to fill the void and showers him with apologies in exchange for the exciting golden-hairedguest he booked. Then, Dom's friend The ScuzzMan joins them to discuss Volleyball: A Real Underdog Story. Finally, the Popcorn Gallery is back to ask some Goldie Hawn-themed questions.  ",
+         "subtitle":"",
+         "summary":"",
          "mediaType":0,
-         "mediaFileUrl":"http://feeds.soundcloud.com/stream/198524608-hollywoodhandbook-the-scuzzman-doms-close-friend.mp3",
+         "mediaFileUrl":"",
          "mediaFileSize":"53486554"
       }
       ...
@@ -70,6 +70,15 @@ Most of it is self-explanitory except for a couple of things:
 
 2. ```mediaType```: The ```mediaType``` property in the episode object is an interger, with 0 being audio, 1 video and 2 anything else.
 
+3. The ````options```` object parameter in getSubscription/getSubscriptionPromise (optional) takes the following properties (also all optional):
+    - `skip (number)` - Will skip parsing specifed amount of episodes starting from the first item node. Ordering by date before skip/take is an upcoming feature. -1 (skip none) is the default.
+    - `take (number)` - Will parse only specified amount of episodes after skipping if applicable. -1 (take all) is the default.
+    - `parseSub (boolean)` - If false, will skip parsing and including the `subscription` object. True is the default.
+
+## What's Next
+
+- Support for password protected subscriptions
+- Sorting and filtering options.
 
 ## Dependencies
 Podchoosee-Parser uses the following packages:
