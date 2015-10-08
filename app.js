@@ -7,6 +7,7 @@ var PodchooseeParser = function () {
 };
 
 PodchooseeParser.userAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36 Edge/12.0";
+
 PodchooseeParser.getXML = function (uri) {
     var deferral = Q.defer();
     
@@ -41,6 +42,7 @@ PodchooseeParser.getXML = function (uri) {
     
     return deferral.promise;
 }
+
 PodchooseeParser.parseSubscription = function (xml) {
     var deferral = Q.defer();
     
@@ -138,19 +140,20 @@ PodchooseeParser.parseSubscription = function (xml) {
     
     return deferral.promise;
 }
+
 PodchooseeParser.parseEpisodes = function (xml, options) {
     var deferral = Q.defer();
     
     var o = options || {};
     
     var skipItems = (typeof o.skip == "undefined") ? -1 : o.skip;
-    var takeItems = (typeof o.stake == "undefined") ? -1 : o.take;
+    var takeItems = (typeof o.take == "undefined") ? -1 : o.take;
     
     var currentSkip = 0;
     var currentTake = 0;
     
     var episodes = [];
-    
+
     try {
         var inTakeMode = false;
 
@@ -329,6 +332,7 @@ PodchooseeParser.getSubscription = function (url, options, callback) {
         callback(ex, null);
     });
 }
+
 PodchooseeParser.getSubscriptionPromise = function (url, options) {
     var deferral = Q.defer();
     
@@ -356,9 +360,10 @@ PodchooseeParser.getSubscriptionPromise = function (url, options) {
             return Q(null);
     })
     .then(function (sub) {
-        subContainer.subscription = sub;
+        if (sub)
+            subContainer.subscription = sub;
         
-        return PodchooseeParser.parseEpisodes(subXML, skipCount, takeCount);
+        return PodchooseeParser.parseEpisodes(subXML, { skip: skipCount, take: takeCount });
     })
     .done(function (eps) {
     subContainer.episodes = eps;
@@ -371,5 +376,69 @@ PodchooseeParser.getSubscriptionPromise = function (url, options) {
     return deferral.promise;
 }
 
+PodchooseeParser.getSubscriptionFromXMLStringAsync = function (xmlString, options) {
+    return new Q.promise(function (complete, error) {
+        var o = options || {};
+        
+        var skipCount = (typeof o.skip == "undefined") ? -1 : o.skip;
+        var takeCount = (typeof o.take == "undefined") ? -1 : o.take;
+        
+        var parseSub = (typeof o.parseSub == "undefined") ? true : o.parseSub;
+        
+        var subContainer = {
+            subscription: null,
+            episodes: []
+        };
+        
+        var xml = NodeXMLLite.parseString(xmlString);
+
+        var channelNode = null;
+
+        for (var i = 0; i < xml.childs.length; i++) {
+            var xmlNode = xml.childs[i];
+            
+            if (!xmlNode) {
+                continue;
+            }
+            else {
+                if (typeof xmlNode.name !== "undefined") {
+                    if (xmlNode.name === "channel") {
+                        channelNode = xmlNode.childs;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        var totalItems = 0;
+        
+        for (var n = 0; n < channelNode.length; n++) {
+            if (channelNode[n].name == "item") {
+                totalItems++;
+            }
+        };
+
+        Q(null)
+        .then(function () {
+            if (parseSub)
+                return PodchooseeParser.parseSubscription(channelNode);
+            else
+                return Q(null);
+        })
+        .then(function (sub) {
+            if (sub)
+                subContainer.subscription = sub;
+            
+            return PodchooseeParser.parseEpisodes(channelNode, { skip: skipCount, take: takeCount });
+        })
+        .done(function (episodes) {
+            subContainer.episodes = episodes;
+            subContainer.totalPages = Math.ceil(totalItems / takeCount);
+            complete(subContainer);
+        }, function (ex) {
+            error(ex);
+        });
+    });
+}
 
 module.exports = PodchooseeParser;
