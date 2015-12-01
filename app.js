@@ -213,6 +213,12 @@ PodchooseeParser.parseEpisodes = function (xml, options) {
                                     episode.subtitle = childNodes[i].childs[0];
                             }
                             break;
+                        case "itunes:author":
+                            if (typeof childNodes[i].childs != "undefined") {
+                                if (childNodes[i].childs.length > 0)
+                                    episode.author = childNodes[i].childs[0];
+                            }
+                            break;
                         case "guid":
                             if (typeof childNodes[i].childs != "undefined") {
                                 if (childNodes[i].childs.length > 0)
